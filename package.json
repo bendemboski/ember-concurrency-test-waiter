@@ -1,6 +1,6 @@
 {
   "name": "ember-concurrency-test-waiter",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "An easy way to make async test helpers wait for running tasks to complete.",
   "keywords": [
     "ember-addon",
