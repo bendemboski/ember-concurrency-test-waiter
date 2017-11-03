@@ -1,15 +1,12 @@
-import Ember from 'ember';
+import { Promise as EmberPromise } from 'rsvp';
+import EmberObject from '@ember/object';
+import { run } from '@ember/runloop';
 import defineModifier from 'ember-concurrency-test-waiter/define-modifier';
 import { task } from 'ember-concurrency';
 import { TaskProperty } from 'ember-concurrency/-task-property';
 import { module } from 'qunit';
 import test from 'ember-sinon-qunit/test-support/test';
 import checkWaiters from '../helpers/check-waiters';
-
-const {
-  Object: EmberObject,
-  run
-} = Ember;
 
 module('Unit | define modifier', {
   afterEach() {
@@ -22,7 +19,7 @@ test('it works', function(assert) {
 
   let Obj = EmberObject.extend({
     doStuff: task(function * () {
-      return yield new Ember.RSVP.Promise((resolve) => {
+      return yield new EmberPromise((resolve) => {
         this.resolvePromise = resolve;
       });
     }).withTestWaiter(),

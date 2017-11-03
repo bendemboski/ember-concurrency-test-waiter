@@ -1,7 +1,7 @@
+import { A } from '@ember/array';
 import Ember from 'ember';
 
 const {
-  A,
   Test
 } = Ember;
 

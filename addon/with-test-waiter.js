@@ -1,15 +1,15 @@
+import { assert } from '@ember/debug';
+import { registerWaiter } from '@ember/test';
 import Ember from 'ember';
 
 const {
-  Test,
-  assert,
   testing
 } = Ember;
 
 let taskRunCounter = 0;
 
 if (testing) {
-  Test.registerWaiter(() => taskRunCounter === 0);
+  registerWaiter(() => taskRunCounter === 0);
 }
 
 // A function that, given a task property, will register it with the test

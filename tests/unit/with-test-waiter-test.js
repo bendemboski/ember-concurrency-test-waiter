@@ -1,14 +1,10 @@
-import Ember from 'ember';
+import EmberObject from '@ember/object';
+import { Promise } from 'rsvp';
+import { run } from '@ember/runloop';
 import withTestWaiter from 'ember-concurrency-test-waiter/with-test-waiter';
 import { task } from 'ember-concurrency';
 import { module, test } from 'qunit';
 import checkWaiters from '../helpers/check-waiters';
-
-const {
-  Object: EmberObject,
-  RSVP: { Promise },
-  run
-} = Ember;
 
 module('Unit | with test waiter');
 

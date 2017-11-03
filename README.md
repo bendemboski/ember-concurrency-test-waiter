@@ -28,12 +28,10 @@ use it to wrap any tasks that you want to block asynchronous test helpers:
 
 ```javascript
 // components/my-component.js
-import Ember from 'ember';
+import Component from '@ember/component';
 import { task } from 'ember-concurrency';
 import withTestWaiter from 'ember-concurrency-test-waiter/with-test-waiter';
 import doSomethingAsync from '../utils/do-something-async';
-
-const { Component } = Ember;
 
 export default Component.extend({
   myTask: withTestWaiter(task(function*() {
@@ -56,11 +54,9 @@ defineModifier();
 
 ```javascript
 // components/my-component.js
-import Ember from 'ember';
+import Component from '@ember/component';
 import { task } from 'ember-concurrency';
 import doSomethingAsync from '../utils/do-something-async';
-
-const { Component } = Ember;
 
 export default Component.extend({
   myTask: task(function*() {
@@ -89,25 +85,21 @@ defineModifier();
 ```javascript
 // app/components/image-size.js
 
-import Ember from 'ember';
+import $ from 'jquery';
+import Component from '@ember/component';
+import { Promise } from 'rsvp';
+import { run } from '@ember/runloop';
 import { task } from 'ember-concurrency';
-
-const {
-  $,
-  Component,
-  RSVP: { Promise },
-  run
-} = Ember;
 
 export default Component.extend({
   src: null,
   dimensions: null,
-  
+
   init() {
     this._super(...arguments);
     this.get('computeDimensions').perform(this.get('src'));
   },
-  
+
   computeDimensions: task(function*(src) {
     let img = yield new Promise((resolve, reject) => {
       let $img = $('<img>');
@@ -134,15 +126,11 @@ export default Component.extend({
 ```javascript
 // tests/integration/components/image-size.js
 
-import Ember from 'ember';
+import { A } from '@ember/array';
+import { run } from '@ember/runloop';
 import { moduleForComponent, test } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import wait from 'ember-test-helpers/wait';
-
-const {
-  A,
-  run
-} = Ember;
 
 moduleForComponent('image-size', 'Integration | Component | image-size', {
   integration: true
@@ -150,9 +138,9 @@ moduleForComponent('image-size', 'Integration | Component | image-size', {
 
 test('it works', function(assert) {
   assert.expect(2);
-  
+
   this.render(hbs`{{image-size src="assets/test-image.jpg"}}`);
-  
+
   assert.equal(this.$().text().trim(), "loading...");
   return wait().then(() => { // yay!
     assert.equal(this.$().text().trim(), "200x350");
