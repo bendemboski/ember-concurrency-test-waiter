@@ -1,5 +1,4 @@
 import { assert } from '@ember/debug';
-import { registerWaiter } from '@ember/test';
 import Ember from 'ember';
 
 let registered = false;
@@ -15,7 +14,7 @@ export default function withTestWaiter(taskProperty) {
 
   taskProperty.taskFn = function *(...args) {
     if (Ember.testing && !registered) {
-      registerWaiter(() => taskRunCounter === 0);
+      Ember.Test.registerWaiter(() => taskRunCounter === 0);
       registered = true;
     }
 
