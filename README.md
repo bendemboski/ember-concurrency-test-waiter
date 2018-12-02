@@ -65,6 +65,33 @@ export default Component.extend({
 });
 ```
 
+If you're using @task decorator provided by [ember-concurrency-decorators](https://github.com/machty/ember-concurrency-decorators), then use the task modifier like this:
+
+```javascript
+// app.js
+import defineModifier from 'ember-concurrency-test-waiter/define-modifier';
+
+defineModifier();
+
+// remainder of app.js...
+```
+
+```javascript
+// components/my-component.js
+import Component from '@ember/component';
+import { task } from 'ember-concurrency-decorators';
+import doSomethingAsync from '../utils/do-something-async';
+
+export default class MyComponent extends Component {
+  @task({
+    withTestWaiter: true
+  })
+  myTask = function*() {
+    return yield doSomethingAsync();
+  }
+}
+```
+
 ## Why?
 
 Here is a full example if how this addon could be useful to you. Suppose you want to test a component
