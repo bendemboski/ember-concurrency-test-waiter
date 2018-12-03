@@ -1,8 +1,7 @@
 # ember-concurrency-test-waiter
 
 Easily instrument your [ember-concurrency](http://ember-concurrency.com) tasks to cause
-[acceptance test helpers](https://guides.emberjs.com/v2.11.0/testing/acceptance/)
-or [ember-test-helpers](https://github.com/emberjs/ember-test-helpers)' `wait()` method to wait for any
+[@ember/test-helpers](https://github.com/emberjs/ember-test-helpers)' `settled()` method to wait for any
 running instances of those tasks to complete before proceeding.
 
 ## Motivation
@@ -128,22 +127,30 @@ export default Component.extend({
 
 import { A } from '@ember/array';
 import { run } from '@ember/runloop';
-import { moduleForComponent, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupRenderingTest } from 'ember-qunit'
 import hbs from 'htmlbars-inline-precompile';
-import wait from 'ember-test-helpers/wait';
+import { render, settled } from '@ember/test-helpers';
 
-moduleForComponent('image-size', 'Integration | Component | image-size', {
-  integration: true
-});
+module('image-size', 'Integration | Component | image-size', function(hooks) {
+  setupRenderingTest(hooks);
 
-test('it works', function(assert) {
-  assert.expect(2);
+  test('it works', async function(assert) {
+    assert.expect(2);
 
-  this.render(hbs`{{image-size src="assets/test-image.jpg"}}`);
+    await render(hbs`{{image-size src="assets/test-image.jpg"}}`);
 
-  assert.equal(this.$().text().trim(), "loading...");
-  return wait().then(() => { // yay!
-    assert.equal(this.$().text().trim(), "200x350");
+    assert.dom(this.element).hasText('loading...');
+    await settled(); // yay!
+    assert.dom(this.element).hasText("200x350");
   });
 });
 ```
+
+### Using the older test API
+
+The mechanism that `ember-concurrency-test-waiter` uses to hook into the `settled`
+method also works for the old test framework -- `moduleForAcceptance` tests will
+automatically wait for `withTestWaiter()` tasks, and in unit tests
+(`moduleForComponent`, etc.), the `wait()` method (imported from `ember-test-helpers`)
+will wait for `withTestWaiter()` tasks.
