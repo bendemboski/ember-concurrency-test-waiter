@@ -4,8 +4,7 @@ import { run } from '@ember/runloop';
 import defineModifier from 'ember-concurrency-test-waiter/define-modifier';
 import { task } from 'ember-concurrency';
 import { TaskProperty } from 'ember-concurrency/-task-property';
-import { module } from 'qunit';
-import test from 'ember-sinon-qunit/test-support/test';
+import { module, test } from 'qunit';
 import checkWaiters from '../helpers/check-waiters';
 
 module('Unit | define modifier', {
