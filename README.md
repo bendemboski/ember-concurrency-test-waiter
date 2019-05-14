@@ -111,7 +111,6 @@ defineModifier();
 ```javascript
 // app/components/image-size.js
 
-import $ from 'jquery';
 import Component from '@ember/component';
 import { Promise } from 'rsvp';
 import { run } from '@ember/runloop';
@@ -123,27 +122,25 @@ export default Component.extend({
 
   init() {
     this._super(...arguments);
-    this.get('computeDimensions').perform(this.get('src'));
+    this.computeDimensions.perform(this.src);
   },
 
   computeDimensions: task(function*(src) {
-    let img = yield new Promise((resolve, reject) => {
-      let $img = $('<img>');
-      $img.load(function() {
-        run(() => resolve(this));
-      });
-      $img.error(run(reject));
-      $img.attr('src', src);
+    let { width, height } = yield new Promise((resolve, reject) => {
+      let image = new Image();
+      image.addEventListener('load', () => resolve(img));
+      image.addEventListener('error', reject);
+      image.src = src;
     });
-    this.set('dimensions', { width: img.width, height: img.height });
+    this.set('dimensions', { width, height });
   }).restartable().withTestWaiter()
 });
 ```
 
 ```handlebars
 {{! app/templates/components/image-size.hbs }}
-{{#if dimensions}}
-  dimensions: {{dimensions.width}}x{{dimensions.height}}
+{{#if this.dimensions}}
+  dimensions: {{this.dimensions.width}}x{{this.dimensions.height}}
 {{else}}
   loading...
 {{/if}}
@@ -165,10 +162,9 @@ module('image-size', 'Integration | Component | image-size', function(hooks) {
   test('it works', async function(assert) {
     assert.expect(2);
 
-    await render(hbs`{{image-size src="assets/test-image.jpg"}}`);
-
-    assert.dom(this.element).hasText('loading...');
-    await settled(); // yay!
+    await render(hbs`<ImageSize @src="assets/test-image.jpg"/>`);
+    // render() awaits settled(), which will now wait for computeDimensions
+    // to complete before resolving
     assert.dom(this.element).hasText("200x350");
   });
 });
