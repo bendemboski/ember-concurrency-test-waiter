@@ -1,9 +1,7 @@
 import { assert } from '@ember/debug';
-import Ember from 'ember';
-import { registerWaiter } from '@ember/test';
+import { buildWaiter } from 'ember-test-waiters';
 
-let registered = false;
-let taskRunCounter = 0;
+let waiter = buildWaiter('ember-concurrency-test-waiter:task-waiter');
 
 // A function that, given a task property, will register it with the test
 // waiter so async test helpers will block anytime a task instance spawned
@@ -14,16 +12,12 @@ export default function withTestWaiter(taskProperty) {
   let originalTaskFn = taskProperty.taskFn;
 
   taskProperty.taskFn = function *(...args) {
-    if (Ember.testing && !registered) {
-      registerWaiter(() => taskRunCounter === 0);
-      registered = true;
-    }
+    let token = waiter.beginAsync();
 
-    taskRunCounter += 1;
     try {
       return yield * originalTaskFn.apply(this, args);
     } finally {
-      taskRunCounter -= 1;
+      waiter.endAsync(token);
     }
   };
   return taskProperty;
