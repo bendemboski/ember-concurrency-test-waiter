@@ -68,7 +68,23 @@ module.exports = async function() {
               '@ember/jquery': '^0.5.1'
             }
           }
-        }
+        },
+        {
+          name: 'ember-concurrency-1.x',
+          npm: {
+            dependencies: {
+              'ember-concurrency': '^1.3.0'
+            }
+          }
+        },
+        {
+          name: 'ember-concurrency-2.x',
+          npm: {
+            dependencies: {
+              'ember-concurrency': '^2.0.0-beta.1'
+            }
+          }
+        },
       ]
     };
 };
