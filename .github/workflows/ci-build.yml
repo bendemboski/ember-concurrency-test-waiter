@@ -34,7 +34,7 @@ jobs:
       - run: yarn test:ember
 
   try-scenarios:
-    name: "Try: ${{ matrix.ember-try-scenario }}"
+    name: "Try: ${{ matrix.ember-try-scenario-base }}${{ matrix.ember-try-scenario-ec-version }}"
 
     runs-on: ubuntu-latest
 
@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        ember-try-scenario:
+        ember-try-scenario-base:
           - ember-lts-3.8
           - ember-lts-3.12
           - ember-lts-3.16
@@ -52,6 +52,9 @@ jobs:
           - ember-beta
           - ember-canary
           - ember-classic
+        ember-try-scenario-ec-version:
+          - ''
+          - '-ec-1.0'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -60,4 +63,4 @@ jobs:
       - name: install dependencies
         run: yarn install --frozen-lockfile
       - name: test
-        run: node_modules/.bin/ember try:one ${{ matrix.ember-try-scenario }} --skip-cleanup
+        run: node_modules/.bin/ember try:one ${{ matrix.ember-try-scenario-base }}${{ matrix.ember-try-scenario-ec-version }} --skip-cleanup
