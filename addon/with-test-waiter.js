@@ -9,13 +9,13 @@ let taskRunCounter = 0;
 // waiter so async test helpers will block anytime a task instance spawned
 // from that property is running.
 export default function withTestWaiter(taskProperty) {
-  assert("withTestWaiter() will only work with ember-concurrency >=0.7.19 -- please upgrade", taskProperty.hasOwnProperty('taskFn'));
+  assert("withTestWaiter() will only work with ember-concurrency >=0.7.19 -- please upgrade", Object.prototype.hasOwnProperty.call(taskProperty, 'taskFn'));
 
   let originalTaskFn = taskProperty.taskFn;
 
   taskProperty.taskFn = function *(...args) {
     if (Ember.testing && !registered) {
-      registerWaiter(() => taskRunCounter === 0);
+      registerWaiter(() => taskRunCounter === 0); // eslint-disable-line ember/no-legacy-test-waiters
       registered = true;
     }
 
