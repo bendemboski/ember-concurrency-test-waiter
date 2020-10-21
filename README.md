@@ -91,6 +91,16 @@ export default class MyComponent extends Component {
 }
 ```
 
+### TypeScript
+
+To use `withTestWaiter: true` in the task decorator with TypeScript, you will need to import the types for `ember-concurrency-test-waiter`. This can be done in `types/<app-name>/index.d.ts`:
+
+```javascript
+// types/<app-name>/index.d.ts
+
+import 'ember-concurrency-test-waiter';
+```
+
 ## Why?
 
 Here is a full example if how this addon could be useful to you. Suppose you want to test a component
