@@ -1,3 +1,71 @@
+# This project is deprecated
+
+This project is deprecated and will no longer be maintained. Now that `@ember/test-waiters`' [waitFor](https://github.com/emberjs/ember-test-waiters#waitfor-function) decorator/function can be used on `ember-concurrency` task functions, this addon is no longer needed. The migration is quite simple:
+
+```js
+// before
+import Component from '@glimmer/component';
+import { task } from 'ember-concurrency';
+
+export default class MyComponent extends Component {
+  @task({
+    withTestWaiter: true
+  })
+  *myTask() {
+    return yield doSomethingAsync();
+  }
+}
+
+// after
+import Component from '@glimmer/component';
+import { task } from 'ember-concurrency';
+import { waitFor } from '@ember/test-waiters';
+
+export default class MyComponent extends Component {
+  @task
+  @waitFor
+  *myTask() {
+    return yield doSomethingAsync();
+  }
+}
+```
+
+```js
+// before (without `defineModifier()`)
+import Component from '@ember/component';
+import { task } from 'ember-concurrency';
+import withTestWaiter from 'ember-concurrency-test-waiter/with-test-waiter';
+
+export default Component.extend({
+  myTask: withTestWaiter(task(function*() {
+    return yield doSomethingAsync();
+  }))
+});
+
+// before (with `defineModifier()`)
+import Component from '@ember/component';
+import { task } from 'ember-concurrency';
+
+export default Component.extend({
+  myTask: task(function*() {
+    return yield doSomethingAsync();
+  }).withTestWaiter()
+});
+
+// after
+import Component from '@ember/component';
+import { task } from 'ember-concurrency';
+import { waitFor } from '@ember/test-waiters';
+
+export default Component.extend({
+  myTask: task(waitFor(function*() {
+    return yield doSomethingAsync();
+  }))
+});
+```
+
+Note that `ember-concurrency-test-waiter` wraps `ember-concurrency` tasks (`withTestWaiter(task(function*() { ... }))`), while `waitFor` wraps the task function (`task(waitFor(function*() { ... }))`).
+
 # ember-concurrency-test-waiter
 
 Easily instrument your [ember-concurrency](http://ember-concurrency.com) tasks to cause
